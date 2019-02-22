@@ -10,7 +10,7 @@ def ToyModel(n_vertices, n_edges):
     """
 
     with open('test_data.csv', 'w') as csvFile:
-        Step_Labels = ['User', 'Age', 'Social Level', 'Salary', 'Steps', 'Time']
+        Step_Labels = ['User', 'Gender', 'Age', 'Social Level', 'Salary', 'N Steps', 'Steps', 'Total Time', 'Time']
         fields = Step_Labels
         writer = csv.DictWriter(csvFile, fieldnames=fields)
         writer.writeheader()
@@ -26,9 +26,14 @@ def ObtainPath(gr, user_ID, csvFile, writer):
     paso, y escribe los datos en un archivo CSV
     """
     User_Steps = []
-    user_demogra = [random.randint(18, 100),
-                    random.randint(1, 6),
-                    random.randint(800, 100000)]
+
+    range_ages         = [x for x in range(18, 35)]*45 + [x for x in range(35, 60)]*35 + [x for x in range(60, 100)]*20
+    range_social_level = [1]*10 +[2]*20 +[3]*30 +[4]*25 +[5]*15 +[6]*10
+    range_salary       = [x for x in range(800, 1500)]*40 + [x for x in range(1500, 5500)]*45 + [x for x in range(5500, 20000)]*15
+    gender_list        = ['F']*55 + ['M']*45
+    user_demogra = [random.choice(range_ages),
+                    random.choice(range_social_level),
+                    random.choice(range_salary)]
 
     i = 0
     start_time = datetime.datetime.now()
@@ -48,15 +53,24 @@ def ObtainPath(gr, user_ID, csvFile, writer):
         steps_time.append(steps[3])
         data_steps.append(move)
 
-    data.append({'User': user_ID,
-                 'Age':  user_demogra[0],
+    first_time = datetime.datetime.strptime(steps_time[0], '%Y-%m-%d %H:%M:%S').timestamp()
+    last_time  = datetime.datetime.strptime(steps_time[-1], '%Y-%m-%d %H:%M:%S').timestamp()
+    #total_time = (datetime.datetime.timestamp(steps_time[-1]) - datetime.datetime.timestamp(steps_time[0])) + 10
+    total_time = last_time - first_time
+    total_time_in_min = (total_time + 10)/60.0   # seconds to minutes
+
+    data.append({'User':          user_ID,
+                 'Gender':        random.choice(gender_list),
+                 'Age':           user_demogra[0],
                  'Social Level' : user_demogra[1],
-                 'Salary': user_demogra[2], # in 800K to 100000K pesos
-                 'Steps': data_steps,
-                 'Time': steps_time,
+                 'Salary':        user_demogra[2], # in 800K to 100000K pesos
+                 'N Steps':       len(data_steps),
+                 'Steps':         data_steps,
+                 'Total Time' :   total_time_in_min,
+                 'Time':          steps_time,
                  })
 
-    print(user_ID, data_steps, steps_time)
+    #print(user_ID, data_steps, steps_time)
 
     #print('%s =', user_ID, data)
 
