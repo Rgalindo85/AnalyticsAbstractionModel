@@ -10,7 +10,7 @@ def ToyModel(n_vertices, n_edges):
     """
 
     with open('test_data.csv', 'w') as csvFile:
-        Step_Labels = ['User', 'Age', 'Social Level', 'Salary', 'Step', 'In', 'Out', 'Time']
+        Step_Labels = ['User', 'Age', 'Social Level', 'Salary', 'Steps', 'Time']
         fields = Step_Labels
         writer = csv.DictWriter(csvFile, fieldnames=fields)
         writer.writeheader()
@@ -40,17 +40,23 @@ def ObtainPath(gr, user_ID, csvFile, writer):
         start_time = time
         i += 1
 
+    data_steps = []
+    steps_time = []
     data = []
     for steps in User_Steps:
-        data.append({'User': user_ID,
-                     'Age':  user_demogra[0],
-                     'Social Level' : user_demogra[1],
-                     'Salary': user_demogra[2], # in 800K to 100000K pesos
-                     'Step': steps[0],
-                     'In':   steps[1],
-                     'Out':  steps[2],
-                     'Time': steps[3]
-                     })
+        move = '%s-%s' % (steps[1], steps[2])
+        steps_time.append(steps[3])
+        data_steps.append(move)
+
+    data.append({'User': user_ID,
+                 'Age':  user_demogra[0],
+                 'Social Level' : user_demogra[1],
+                 'Salary': user_demogra[2], # in 800K to 100000K pesos
+                 'Steps': data_steps,
+                 'Time': steps_time,
+                 })
+
+    print(user_ID, data_steps, steps_time)
 
     #print('%s =', user_ID, data)
 
